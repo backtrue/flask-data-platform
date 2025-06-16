@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}儀表板 - 數據平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .metric-card {
+        transition: transform 0.2s;
+    }
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="dashboard">
+    <!-- 指標卡片 -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card metric-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">總用戶數</h5>
+                    <h2 class="card-text">${ metrics.total_users }</h2>
+                    <p class="card-text text-success">
+                        <i class="fas fa-arrow-up"></i> 較上月增長 5%
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card metric-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">活躍用戶</h5>
+                    <h2 class="card-text">${ metrics.active_users }</h2>
+                    <p class="card-text text-success">
+                        <i class="fas fa-arrow-up"></i> 較上月增長 3%
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card metric-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">轉化率</h5>
+                    <h2 class="card-text">${ (metrics.conversion_rate * 100).toFixed(1) }%</h2>
+                    <p class="card-text text-danger">
+                        <i class="fas fa-arrow-down"></i> 較上月下降 1%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 圖表 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">每日流量和轉化趨勢</h5>
+                    <canvas id="trafficChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const { createApp, ref, onMounted } = Vue;
+
+createApp({
+    setup() {
+        const metrics = ref({
+            total_users: 0,
+            active_users: 0,
+            conversion_rate: 0
+        });
+
+        const fetchMetrics = async () => {
+            try {
+                const response = await axios.get('/api/dashboard/metrics');
+                metrics.value = response.data;
+            } catch (error) {
+                console.error('獲取指標數據失敗:', error);
+            }
+        };
+
+        const fetchTrafficData = async () => {
+            try {
+                const response = await axios.get('/api/dashboard/daily-traffic-conversion');
+                const data = response.data;
+                
+                const ctx = document.getElementById('trafficChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [
+                            {
+                                label: '流量',
+                                data: data.traffic,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            },
+                            {
+                                label: '轉化',
+                                data: data.conversions,
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('獲取流量數據失敗:', error);
+            }
+        };
+
+        onMounted(() => {
+            fetchMetrics();
+            fetchTrafficData();
+        });
+
+        return {
+            metrics
+        };
+    }
+}).mount('#dashboard');
+</script>
+{% endblock %} 

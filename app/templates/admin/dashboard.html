@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}管理面板 - 數據平台{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>管理面板</h1>
+            <a href="{{ url_for('admin.users') }}" class="btn btn-primary">
+                <i class="fas fa-users"></i> 用戶管理
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- 系統狀態 -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">系統狀態</h5>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>數據庫狀態</span>
+                        <span class="badge bg-success">正常</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Google Analytics 連接</span>
+                        <span class="badge bg-success">已連接</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>系統版本</span>
+                        <span class="badge bg-info">1.0.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速操作 -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">快速操作</h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.create_user') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-plus"></i> 新增用戶
+                    </a>
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-sync"></i> 刷新數據
+                    </button>
+                    <button class="btn btn-outline-info">
+                        <i class="fas fa-download"></i> 導出報表
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系統日誌 -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">最近系統日誌</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>時間</th>
+                                <th>用戶</th>
+                                <th>操作</th>
+                                <th>狀態</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-01-01 12:00:00</td>
+                                <td>admin</td>
+                                <td>登入系統</td>
+                                <td><span class="badge bg-success">成功</span></td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-01 11:30:00</td>
+                                <td>user1</td>
+                                <td>更新個人資料</td>
+                                <td><span class="badge bg-success">成功</span></td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-01 11:00:00</td>
+                                <td>user2</td>
+                                <td>導出報表</td>
+                                <td><span class="badge bg-warning">處理中</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
